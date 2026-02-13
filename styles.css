@@ -10,9 +10,9 @@ html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helv
 .body-fallback{}
 body{
   background: #fff;
-  display:flex;align-items:center;justify-content:center;padding:28px;
+  display:flex;align-items:center;justify-content:center;padding:0;margin:0;height:100vh;
 }
-.scene{width:100%;max-width:980px;position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.scene{width:100%;max-width:980px;position:relative;min-height:100vh}
 .card{background:transparent;border-radius:0;padding:0;min-height:100vh;width:100%;position:relative;overflow:visible;display:block}
 h1{font-family:'Playfair Display',serif;margin:0 0 10px;font-weight:700;color:var(--accent)}
 .question{font-size:1.25rem;margin-bottom:18px;color:var(--muted)}
@@ -26,15 +26,25 @@ h1{font-family:'Playfair Display',serif;margin:0 0 10px;font-weight:700;color:va
 .level.active{display:block;opacity:1;transform:none}
 
 
-.level{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;height:100%}
-.level{opacity:0;transform:none;transition:opacity .45s ease}
+.level{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0;margin:0}
+.level{opacity:0;transition:opacity .28s ease}
 .level.active{opacity:1;pointer-events:auto}
 
 /* constrain inner content width and center it */
 .level > *{max-width:760px;margin-left:auto;margin-right:auto}
 
+/* Ensure headings and control groups do not accidentally offset layout */
+h1{display:block;text-align:center;margin:0 auto}
+.controls{justify-content:center}
+
+/* Ensure buttons occupy their visual area and pointer events match */
+.btn{display:inline-flex;align-items:center;justify-content:center}
+
 /* ensure headings and questions are centered */
-h1, .question { text-align:center; width:100%; }
+h1, .question { text-align:center; width:auto; }
+
+/* Defensive: ensure no ancestor transform creates a stacking/positioning context */
+.scene, .card { transform: none !important }
 
 .no-area{position:relative;width:160px;height:44px}
 .no-area .btn{position:absolute;left:0;top:0}

@@ -131,13 +131,6 @@ l2NoArea.addEventListener('mousemove', (e)=>{
   }
 });
 
-l2Yes.addEventListener('mouseenter', ()=>{
-  if(window.innerWidth>520){
-    const rx = Math.floor((Math.random()-0.5)*120);
-    const ry = Math.floor((Math.random()-0.5)*18);
-    l2Yes.style.transform = `translate(${rx}px, ${ry}px)`;
-  }
-});
 
 l2Yes.addEventListener('click', ()=>{
   resetLevel2();
@@ -196,21 +189,7 @@ l3No.addEventListener('click', ()=>{
   playfulNoBehavior();
 });
 
-// reposition L3 buttons on hover for playfulness
-l3Yes.addEventListener('mouseenter', ()=>{
-  if(window.innerWidth>520){
-    const rx = Math.floor((Math.random()-0.5)*120);
-    const ry = Math.floor((Math.random()-0.5)*18);
-    l3Yes.style.transform = `translate(${rx}px, ${ry}px)`;
-  }
-});
-l3No.addEventListener('mouseenter', ()=>{
-  if(window.innerWidth>520){
-    const rx = Math.floor((Math.random()-0.5)*120);
-    const ry = Math.floor((Math.random()-0.5)*18);
-    l3No.style.transform = `translate(${rx}px, ${ry}px)`;
-  }
-});
+// (hover jitter removed to keep controls exactly centered)
 
 function finish(){
   showLevel(levels.FINAL);
@@ -236,6 +215,21 @@ function resetAll(){
 
 // initial
 showLevel(levels.L1);
+
+// clear any leftover transforms on load (defensive) and ensure L1 button reset
+window.addEventListener('load', ()=>{
+  document.querySelectorAll('.btn').forEach(b=>{ b.style.transform=''; });
+  resetL1();
+});
+
+// Defensive: also clear transforms on visibility change and before showing a level
+document.addEventListener('visibilitychange', ()=>{
+  document.querySelectorAll('.btn').forEach(b=>{ b.style.transform=''; });
+});
+
+function clearAllTransforms(){
+  document.querySelectorAll('.btn, .no-dup').forEach(el=>{ el.style.transform=''; });
+}
 
 // celebration: floating hearts
 function celebrate(){
