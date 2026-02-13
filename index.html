@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scene">
+    <div class="card" id="card">
+      <!-- Level 1 -->
+      <section class="level" id="level-1">
+        <h1>May I ask you something important?</h1>
+        <div class="controls">
+          <button class="btn primary" id="l1-yes">Of course</button>
+          <button class="btn ghost" id="l1-no">No</button>
+        </div>
+      </section>
+
+      <!-- Level 2 -->
+      <section class="level" id="level-2" aria-hidden="true">
+        <h1>Will you be my Valentine?</h1>
+        <div class="controls" id="l2-controls">
+          <button class="btn primary" id="l2-yes">Yes</button>
+          <div class="no-area" id="l2-no-area">
+            <button class="btn ghost" id="l2-no">No</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Level 3 -->
+      <section class="level" id="level-3" aria-hidden="true">
+        <h1>One final confirmation.</h1>
+        <div class="question" id="l3-question">Do you love me?</div>
+        <div class="controls" id="l3-controls">
+          <button class="btn primary" id="l3-yes">Yes</button>
+          <button class="btn ghost" id="l3-no">No</button>
+        </div>
+        <div class="hint" id="l3-hint"></div>
+      </section>
+
+      <!-- Final -->
+      <section class="level" id="final" aria-hidden="true">
+        <h1 class="final-line">El amor lo vence todo.</h1>
+        <h2 class="final-sub" id="final-sub">And I choose you.</h2>
+        <div class="controls">
+          <button class="btn primary" id="restart">Restart</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div id="hearts" aria-hidden="true"></div>
+    <div id="toast" class="toast" aria-hidden="true"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
