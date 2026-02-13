@@ -27,8 +27,12 @@ function showLevel(target){
   if(window.innerWidth > 520){
     const btns = target.querySelectorAll('.btn');
     btns.forEach(b=>{
-      const rx = Math.floor((Math.random()-0.5)*160);
-      const ry = Math.floor((Math.random()-0.5)*28);
+      b.style.transform = '';
+    });
+    // tiny random jitter within safe bounds
+    btns.forEach(b=>{
+      const rx = Math.floor((Math.random()-0.5)*48);
+      const ry = Math.floor((Math.random()-0.5)*18);
       b.style.transform = `translate(${rx}px, ${ry}px)`;
     });
   }
