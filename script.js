@@ -16,6 +16,24 @@ function showToast(msg, t=1200){
 function showLevel(target){
   Object.values(levels).forEach(s=>s.classList.remove('active'));
   target.classList.add('active');
+  // apply accent color per level for visual variety
+  let color = '#FF6B9A';
+  if(target.id==='level-1') color = '#FF6B9A';
+  if(target.id==='level-2') color = '#9B7CFF';
+  if(target.id==='level-3') color = '#FFB86B';
+  if(target.id==='final') color = '#FF6B9A';
+  document.documentElement.style.setProperty('--accent', color);
+  // randomize button positions slightly for playfulness (desktop only)
+  if(window.innerWidth > 520){
+    const btns = target.querySelectorAll('.btn');
+    btns.forEach(b=>{
+      const rx = Math.floor((Math.random()-0.5)*160);
+      const ry = Math.floor((Math.random()-0.5)*28);
+      b.style.transform = `translate(${rx}px, ${ry}px)`;
+    });
+  }
+  // small floating hearts on level change
+  smallHearts(6);
 }
 
 // Level 1: evasive No
@@ -83,6 +101,14 @@ l2No.addEventListener('mouseenter', ()=>{
   spawnNoClone();
 });
 
+l2Yes.addEventListener('mouseenter', ()=>{
+  if(window.innerWidth>520){
+    const rx = Math.floor((Math.random()-0.5)*120);
+    const ry = Math.floor((Math.random()-0.5)*18);
+    l2Yes.style.transform = `translate(${rx}px, ${ry}px)`;
+  }
+});
+
 l2Yes.addEventListener('click', ()=>{
   resetLevel2();
   enterLevel3();
@@ -90,13 +116,13 @@ l2Yes.addEventListener('click', ()=>{
 
 // Level 3: multi-language flow
 const languages = [
-  {q:'Do you love me?', yes:'Yes', no:'No'},
-  {q:'¿Me amas?', yes:'Sí', no:'No'},
-  {q:'Mi ami?', yes:'Sì', no:'No'},
-  {q:"Tu m'aimes?", yes:'Oui', no:'Non'},
-  {q:'Você me ama?', yes:'Sim', no:'Não'},
-  {q:'나를 사랑해?', yes:'네', no:'아니요'},
-  {q:'Me amas?', yes:'Ita', no:'Non'}
+  {title:'One final confirmation.', q:'Do you love me?', yes:'Yes', no:'No'},
+  {title:'Una última confirmación.', q:'¿Me amas?', yes:'Sí', no:'No'},
+  {title:'Una conferma finale.', q:'Mi ami?', yes:'Sì', no:'No'},
+  {title:'Une dernière confirmation.', q:"Tu m'aimes?", yes:'Oui', no:'Non'},
+  {title:'Uma confirmação final.', q:'Você me ama?', yes:'Sim', no:'Não'},
+  {title:'최종 확인입니다.', q:'나를 사랑해?', yes:'네', no:'아니요'},
+  {title:'Ultima confirmatio.', q:'Me amas?', yes:'Ita', no:'Non'}
 ];
 
 let langIndex = 0;
@@ -113,6 +139,8 @@ function enterLevel3(){
 
 function updateLanguage(){
   const item = languages[langIndex];
+  const l3Title = document.getElementById('l3-title');
+  l3Title.textContent = item.title;
   l3Question.textContent = item.q;
   l3Yes.textContent = item.yes;
   l3No.textContent = item.no;
@@ -138,6 +166,22 @@ l3No.addEventListener('click', ()=>{
   playfulNoBehavior();
 });
 
+// reposition L3 buttons on hover for playfulness
+l3Yes.addEventListener('mouseenter', ()=>{
+  if(window.innerWidth>520){
+    const rx = Math.floor((Math.random()-0.5)*120);
+    const ry = Math.floor((Math.random()-0.5)*18);
+    l3Yes.style.transform = `translate(${rx}px, ${ry}px)`;
+  }
+});
+l3No.addEventListener('mouseenter', ()=>{
+  if(window.innerWidth>520){
+    const rx = Math.floor((Math.random()-0.5)*120);
+    const ry = Math.floor((Math.random()-0.5)*18);
+    l3No.style.transform = `translate(${rx}px, ${ry}px)`;
+  }
+});
+
 function finish(){
   showLevel(levels.FINAL);
   // fade-in final-sub
@@ -154,6 +198,9 @@ document.getElementById('restart').addEventListener('click', ()=>{
 
 function resetAll(){
   resetLevel2(); resetL1(); langIndex = 0; updateLanguage();
+  // clear transforms
+  document.querySelectorAll('.btn').forEach(b=>{ b.style.transform=''; });
+  heartsRoot.innerHTML = '';
   showLevel(levels.L1);
 }
 
@@ -173,6 +220,52 @@ function celebrate(){
     heartsRoot.appendChild(h);
   }
 }
+
+// small hearts for transitions
+function smallHearts(n=6){
+  for(let i=0;i<n;i++){
+    const h = document.createElement('div'); h.className='heart';
+    h.style.left = (30 + Math.random()*40) + '%';
+    h.style.bottom = (10 + Math.random()*30) + '%';
+    h.style.width = (6 + Math.random()*12) + 'px';
+    h.style.height = h.style.width;
+    h.style.animation = `floatUp ${2+Math.random()*2}s ease forwards ${Math.random()*0.4}s`;
+    heartsRoot.appendChild(h);
+    setTimeout(()=>{ h.remove(); }, 4000);
+  }
+}
+
+// rose border creation
+function createRoseBorder(){
+  const root = document.getElementById('rose-border');
+  if(!root) return;
+  root.innerHTML = '';
+  const count = 12;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.className = 'rose side';
+    s.textContent = '🌹';
+    // distribute along top and bottom
+    const pct = (i/(count-1))*100;
+    s.style.left = pct + '%';
+    s.style.top = (i%2===0? '2%':'92%');
+    s.style.fontSize = (14 + Math.random()*10) + 'px';
+    root.appendChild(s);
+  }
+  // left and right
+  for(let i=0;i<6;i++){
+    const s = document.createElement('span');
+    s.className = 'rose side';
+    s.textContent = '🌹';
+    const pct = (i/5)*100;
+    s.style.left = (i%2===0? '2%':'96%');
+    s.style.top = (10 + pct*0.7) + '%';
+    s.style.fontSize = (12 + Math.random()*10) + 'px';
+    root.appendChild(s);
+  }
+}
+
+createRoseBorder();
 
 // small accessibility: keyboard support for L1 yes
 document.addEventListener('keydown', (e)=>{
