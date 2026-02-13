@@ -26,15 +26,8 @@ function showLevel(target){
   // randomize button positions slightly for playfulness (desktop only)
   if(window.innerWidth > 520){
     const btns = target.querySelectorAll('.btn');
-    btns.forEach(b=>{
-      b.style.transform = '';
-    });
-    // tiny random jitter within safe bounds
-    btns.forEach(b=>{
-      const rx = Math.floor((Math.random()-0.5)*48);
-      const ry = Math.floor((Math.random()-0.5)*18);
-      b.style.transform = `translate(${rx}px, ${ry}px)`;
-    });
+      // ensure buttons have no accumulated transforms so layout stays centered
+      btns.forEach(b=>{ b.style.transform = ''; });
   }
   // small floating hearts on level change
   smallHearts(6);
