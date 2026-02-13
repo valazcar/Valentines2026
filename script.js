@@ -48,10 +48,19 @@ function randomOffset(el){
   return {x,y};
 }
 
-l1No.addEventListener('mouseenter', ()=>{
-  const {x,y} = randomOffset(card);
-  l1No.style.transition = 'transform .35s ease';
-  l1No.style.transform = `translate(${x}px, ${y}px)`;
+// Level 1 evasive No: pick a new position within the card bounds so it never leaves the view.
+l1No.addEventListener('mouseenter', (ev)=>{
+  const container = card.getBoundingClientRect();
+  const btnRect = l1No.getBoundingClientRect();
+  const margin = 12;
+  const maxX = Math.max(0, container.width - btnRect.width - margin);
+  const maxY = Math.max(0, container.height - btnRect.height - margin);
+  const relX = Math.random() * maxX;
+  const relY = Math.random() * maxY;
+  const offsetX = relX - (btnRect.left - container.left);
+  const offsetY = relY - (btnRect.top - container.top);
+  l1No.style.transition = 'transform .32s cubic-bezier(.2,.9,.2,1)';
+  l1No.style.transform = `translate(${Math.round(offsetX)}px, ${Math.round(offsetY)}px)`;
 });
 
 l1Yes.addEventListener('click', ()=>{
@@ -82,23 +91,47 @@ function spawnNoClone(){
   const clone = l2No.cloneNode(true);
   clone.classList.add('no-dup');
   clone.removeAttribute('id');
-  const areaRect = l2NoArea.getBoundingClientRect();
-  const x = Math.random()*(areaRect.width-40);
-  const y = Math.random()*(areaRect.height+120) - 40;
+  // place clone inside card to allow more space
+  const container = card.getBoundingClientRect();
+  const x = Math.random()*(container.width-80);
+  const y = Math.random()*(container.height-80);
+  clone.style.position = 'absolute';
   clone.style.left = `${x}px`;
   clone.style.top = `${y}px`;
+  clone.style.transform = '';
   clone.addEventListener('click', ()=>{
     showToast('That seems unlikely.');
     resetLevel2();
     showLevel(levels.L2);
   });
-  l2NoArea.appendChild(clone);
+  // append to card so clones can float around
+  card.appendChild(clone);
   l2Clones.push(clone);
 }
 
-l2No.addEventListener('mouseenter', ()=>{
-  // spawn several clones gradually
-  spawnNoClone();
+// Make the No button more reactive: when the cursor approaches within a threshold, spawn clones and nudge the button away.
+let l2LastSpawn = 0;
+l2NoArea.addEventListener('mousemove', (e)=>{
+  const now = Date.now();
+  const btnRect = l2No.getBoundingClientRect();
+  const dx = e.clientX - (btnRect.left + btnRect.width/2);
+  const dy = e.clientY - (btnRect.top + btnRect.height/2);
+  const dist = Math.hypot(dx, dy);
+  if(dist < 140 && now - l2LastSpawn > 300){
+    spawnNoClone();
+    l2LastSpawn = now;
+    // nudge original to a new spot within card bounds
+    const container = card.getBoundingClientRect();
+    const margin = 12;
+    const maxX = Math.max(0, container.width - btnRect.width - margin);
+    const maxY = Math.max(0, container.height - btnRect.height - margin);
+    const relX = Math.random() * maxX;
+    const relY = Math.random() * maxY;
+    const offsetX = relX - (btnRect.left - container.left);
+    const offsetY = relY - (btnRect.top - container.top);
+    l2No.style.transition = 'transform .28s cubic-bezier(.2,.9,.2,1)';
+    l2No.style.transform = `translate(${Math.round(offsetX)}px, ${Math.round(offsetY)}px)`;
+  }
 });
 
 l2Yes.addEventListener('mouseenter', ()=>{
@@ -240,49 +273,69 @@ function createRoseBorder(){
   const root = document.getElementById('rose-border');
   if(!root) return;
   root.innerHTML = '';
-  // place roses and small hearts along all four edges
+  // use small inline SVG shapes for a cleaner border (hearts and simple roses)
+  function heartSVG(size, color){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-7-4.9-9-8.1C-0.5 8.3 4.2 3 7.6 6.1 9.3 7.6 12 9.8 12 9.8s2.7-2.2 4.4-3.7C19.8 3 24.5 8.3 21 12.9 19 16.1 12 21 12 21z" fill="${color}"/></svg>`;
+  }
+  function roseSVG(size, color){
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="${color}"/><path d="M8 12c1-3 7-3 8 0s-3 3-4 3-4-1-4-3z" fill="#fff" opacity="0.12"/></svg>`;
+  }
+
   const topCount = 14;
   for(let i=0;i<topCount;i++){
-    const type = (i%3===0)?'heart':'rose';
-    const s = document.createElement('span');
-    s.className = `edge-item ${type}`;
-    s.textContent = type==='rose' ? '🌹' : '💗';
-    const pct = (i/(topCount-1))*100;
-    s.style.left = pct + '%';
-    s.style.top = '2%';
-    s.style.fontSize = (12 + Math.random()*12) + 'px';
-    s.style.animationDelay = (Math.random()*1.2)+'s';
-    root.appendChild(s);
+    const isHeart = (i%3===0);
+    const el = document.createElement('div');
+    el.className = 'edge-item';
+    const size = 18 + Math.round(Math.random()*12);
+    el.style.position = 'absolute';
+    el.style.left = (i/(topCount-1))*100 + '%';
+    el.style.top = '2%';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.transform = `translateX(-50%)`;
+    el.style.opacity = 0.95;
+    el.style.animationDelay = (Math.random()*1.2)+'s';
+    el.innerHTML = isHeart ? heartSVG(size, '#FF7AA7') : roseSVG(size, '#D9547A');
+    root.appendChild(el);
   }
+
   const bottomCount = 12;
   for(let i=0;i<bottomCount;i++){
-    const type = (i%2===0)?'rose':'heart';
-    const s = document.createElement('span');
-    s.className = `edge-item ${type}`;
-    s.textContent = type==='rose' ? '🌹' : '💗';
-    const pct = (i/(bottomCount-1))*100;
-    s.style.left = pct + '%';
-    s.style.top = '96%';
-    s.style.fontSize = (12 + Math.random()*10) + 'px';
-    s.style.animationDelay = (Math.random()*1.4)+'s';
-    root.appendChild(s);
+    const isHeart = (i%2===0);
+    const el = document.createElement('div');
+    el.className = 'edge-item';
+    const size = 14 + Math.round(Math.random()*10);
+    el.style.position = 'absolute';
+    el.style.left = (i/(bottomCount-1))*100 + '%';
+    el.style.top = '96%';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.transform = `translateX(-50%)`;
+    el.style.opacity = 0.95;
+    el.style.animationDelay = (Math.random()*1.4)+'s';
+    el.innerHTML = isHeart ? heartSVG(size, '#FF9FBF') : roseSVG(size, '#C04A6B');
+    root.appendChild(el);
   }
-  // left and right edges
+
   const sideCount = 8;
   for(let i=0;i<sideCount;i++){
-    const type = (i%2===0)?'rose':'heart';
-    const sL = document.createElement('span');
-    sL.className = `edge-item ${type}`;
-    sL.textContent = type==='rose' ? '🌹' : '💗';
-    sL.style.left = '1%';
-    sL.style.top = (10 + i*(76/(sideCount-1))) + '%';
-    sL.style.fontSize = (12 + Math.random()*10) + 'px';
-    sL.style.animationDelay = (Math.random()*1.6)+'s';
-    root.appendChild(sL);
+    const isHeart = (i%2===0);
+    const size = 14 + Math.round(Math.random()*10);
+    const elL = document.createElement('div');
+    elL.className = 'edge-item';
+    elL.style.position = 'absolute';
+    elL.style.left = '1%';
+    elL.style.top = (10 + i*(76/(sideCount-1))) + '%';
+    elL.style.width = size + 'px';
+    elL.style.height = size + 'px';
+    elL.style.opacity = 0.95;
+    elL.style.animationDelay = (Math.random()*1.6)+'s';
+    elL.innerHTML = isHeart ? heartSVG(size, '#FF7AA7') : roseSVG(size, '#D9547A');
+    root.appendChild(elL);
 
-    const sR = sL.cloneNode(true);
-    sR.style.left = '97%';
-    root.appendChild(sR);
+    const elR = elL.cloneNode(true);
+    elR.style.left = '97%';
+    root.appendChild(elR);
   }
 }
 

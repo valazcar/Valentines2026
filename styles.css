@@ -25,7 +25,10 @@ h1{font-family:'Playfair Display',serif;margin:0 0 10px;font-weight:700;color:va
 .level{opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease;display:none;padding-top:18px}
 .level.active{display:block;opacity:1;transform:none}
 
-.level{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:50vh}
+.level{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh}
+
+/* ensure headings and questions are centered */
+h1, .question { text-align:center; width:100%; }
 
 .no-area{position:relative;width:160px;height:44px}
 .no-area .btn{position:absolute;left:0;top:0}
@@ -58,10 +61,14 @@ h1{font-family:'Playfair Display',serif;margin:0 0 10px;font-weight:700;color:va
 .rose-border{position:absolute;inset:0;pointer-events:none}
 .rose-border{position:absolute;inset:0;pointer-events:none;z-index:0}
 .rose-border .edge-item{position:absolute;opacity:0.95;transform-origin:center;will-change:transform,opacity}
-.rose-border .edge-item.rose{font-size:18px}
-.rose-border .edge-item.heart{font-size:14px}
 .rose-border .edge-item{animation:edgeFloat 5.5s ease-in-out infinite}
+.rose-border .edge-item svg{display:block;width:100%;height:100%}
 @keyframes edgeFloat{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(-3deg)}100%{transform:translateY(0) rotate(0)}}
+
+/* ensure rose-border sits above background but below content */
+#rose-border{z-index:2}
+#hearts{z-index:3}
+.card{z-index:4}
 
 .heading-decor{display:inline-block;margin-right:8px;transform:translateY(0);transition:transform .6s ease}
 
