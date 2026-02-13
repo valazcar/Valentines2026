@@ -240,28 +240,49 @@ function createRoseBorder(){
   const root = document.getElementById('rose-border');
   if(!root) return;
   root.innerHTML = '';
-  const count = 12;
-  for(let i=0;i<count;i++){
+  // place roses and small hearts along all four edges
+  const topCount = 14;
+  for(let i=0;i<topCount;i++){
+    const type = (i%3===0)?'heart':'rose';
     const s = document.createElement('span');
-    s.className = 'rose side';
-    s.textContent = '🌹';
-    // distribute along top and bottom
-    const pct = (i/(count-1))*100;
+    s.className = `edge-item ${type}`;
+    s.textContent = type==='rose' ? '🌹' : '💗';
+    const pct = (i/(topCount-1))*100;
     s.style.left = pct + '%';
-    s.style.top = (i%2===0? '2%':'92%');
-    s.style.fontSize = (14 + Math.random()*10) + 'px';
+    s.style.top = '2%';
+    s.style.fontSize = (12 + Math.random()*12) + 'px';
+    s.style.animationDelay = (Math.random()*1.2)+'s';
     root.appendChild(s);
   }
-  // left and right
-  for(let i=0;i<6;i++){
+  const bottomCount = 12;
+  for(let i=0;i<bottomCount;i++){
+    const type = (i%2===0)?'rose':'heart';
     const s = document.createElement('span');
-    s.className = 'rose side';
-    s.textContent = '🌹';
-    const pct = (i/5)*100;
-    s.style.left = (i%2===0? '2%':'96%');
-    s.style.top = (10 + pct*0.7) + '%';
+    s.className = `edge-item ${type}`;
+    s.textContent = type==='rose' ? '🌹' : '💗';
+    const pct = (i/(bottomCount-1))*100;
+    s.style.left = pct + '%';
+    s.style.top = '96%';
     s.style.fontSize = (12 + Math.random()*10) + 'px';
+    s.style.animationDelay = (Math.random()*1.4)+'s';
     root.appendChild(s);
+  }
+  // left and right edges
+  const sideCount = 8;
+  for(let i=0;i<sideCount;i++){
+    const type = (i%2===0)?'rose':'heart';
+    const sL = document.createElement('span');
+    sL.className = `edge-item ${type}`;
+    sL.textContent = type==='rose' ? '🌹' : '💗';
+    sL.style.left = '1%';
+    sL.style.top = (10 + i*(76/(sideCount-1))) + '%';
+    sL.style.fontSize = (12 + Math.random()*10) + 'px';
+    sL.style.animationDelay = (Math.random()*1.6)+'s';
+    root.appendChild(sL);
+
+    const sR = sL.cloneNode(true);
+    sR.style.left = '97%';
+    root.appendChild(sR);
   }
 }
 
