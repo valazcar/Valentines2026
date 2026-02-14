@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Valentine</title>
+  <title>Valentine - Level 3</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,11 +11,13 @@
   <div class="scene">
     <div id="rose-border" aria-hidden="true"></div>
     <div class="card" id="card">
-      <h1>May I ask you something important?</h1>
-      <div class="controls">
-        <button class="btn primary" id="l1-yes">Of course</button>
-        <button class="btn ghost" id="l1-no">No</button>
+      <h1 id="l3-title">One final confirmation.</h1>
+      <div class="question" id="l3-question">Do you love me?</div>
+      <div class="controls" id="l3-controls">
+        <button class="btn primary" id="l3-yes">Yes</button>
+        <button class="btn ghost" id="l3-no">No</button>
       </div>
+      <div class="hint" id="l3-hint"></div>
     </div>
 
     <div id="hearts" aria-hidden="true"></div>
@@ -23,6 +25,6 @@
   </div>
 
   <script src="script.js"></script>
-  <script src="level1.js"></script>
+  <script src="level3.js"></script>
 </body>
 </html>
